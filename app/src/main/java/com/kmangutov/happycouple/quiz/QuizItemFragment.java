@@ -10,8 +10,9 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.kmangutov.happycouple.R;
-import com.kmangutov.happycouple.services.EventBusProvider;
 import com.kmangutov.happycouple.services.QuizChoiceEvent;
+import com.kmangutov.happycouple.services.QuizQuestion;
+import com.kmangutov.happycouple.services.QuizService;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -21,9 +22,13 @@ import de.greenrobot.event.EventBus;
 
 public class QuizItemFragment extends Fragment {
 
+    private int mQuestionIndex;
 
     @InjectView(R.id.buttonOption1)
     Button mButtonOne;
+
+    @InjectView(R.id.buttonOption2)
+    Button mButtonTwo;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -33,8 +38,17 @@ public class QuizItemFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_quiz_item, container, false);
         ButterKnife.inject(this, view);
+        mQuestionIndex = getArguments().getInt("id");
+        loadQuestion();
 
         return view;
+    }
+
+    public void loadQuestion() {
+
+        QuizQuestion question = QuizService.getInstance().getIth(mQuestionIndex);
+        mButtonOne.setText(question.OptionOne);
+        mButtonTwo.setText(question.OptionTwo);
     }
 
     @Override
@@ -45,9 +59,6 @@ public class QuizItemFragment extends Fragment {
 
     @OnClick(R.id.buttonOption1)
     public void button1() {
-
-        Log.d("QuizItemFragment", "button1 click");
-        Toast.makeText(getActivity().getApplicationContext(), "CLICK", Toast.LENGTH_SHORT).show();
 
         QuizChoiceEvent event = new QuizChoiceEvent(0, 0);
         post(event);
