@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.kmangutov.happycouple.R;
 import com.kmangutov.happycouple.services.QuizChoiceEvent;
+import com.kmangutov.happycouple.services.QuizService;
 
 import de.greenrobot.event.EventBus;
 
@@ -33,16 +34,21 @@ public class QuizFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
     }
 
-    public void init() {
+    protected static QuizItemFragment generateQuizItem(int id) {
 
         QuizItemFragment quizItem = new QuizItemFragment();
         Bundle args = new Bundle();
-        args.putInt("id", mQuestionIndex);
+        args.putInt("id", id);
         quizItem.setArguments(args);
+
+        return quizItem;
+    }
+
+    public void init() {
 
         getChildFragmentManager()
                 .beginTransaction()
-                .add(R.id.fragmentQuizItem, quizItem).commit();
+                .add(R.id.fragmentQuizItem, generateQuizItem(0)).commit();
     }
 
     @Override
@@ -53,20 +59,19 @@ public class QuizFragment extends Fragment {
 
     public void onEvent(QuizChoiceEvent event) {
 
-        //Toast.makeText(getActivity().getApplicationContext(), "Option " + event.mOption, Toast.LENGTH_SHORT).show();
-        nextQuestion();
+        QuizService.getInstance().select(event.mId, event.mOption);
+
+        if(event.mId + 1 < QuizService.getInstance().getTotal())
+            nextQuestion(event.mId);
+        else
+            Log.d("QuizFragment", "Out of quesitons!~!");
     }
 
-    public void nextQuestion() {
-
-        QuizItemFragment quizItem = new QuizItemFragment();
-        Bundle args = new Bundle();
-        args.putInt("id", ++mQuestionIndex);
-        quizItem.setArguments(args);
+    public void nextQuestion(int fromQuestion) {
 
         getChildFragmentManager()
                 .beginTransaction()
-                .replace(R.id.fragmentQuizItem, quizItem)
+                .replace(R.id.fragmentQuizItem, generateQuizItem(fromQuestion + 1))
                 .addToBackStack(null).commit();
     }
 }

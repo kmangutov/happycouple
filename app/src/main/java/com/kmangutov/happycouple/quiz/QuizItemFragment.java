@@ -44,7 +44,12 @@ public class QuizItemFragment extends Fragment {
         return view;
     }
 
-    public void loadQuestion() {
+    public int getIndex() {
+
+        return mQuestionIndex;
+    }
+
+    protected void loadQuestion() {
 
         QuizQuestion question = QuizService.getInstance().getIth(mQuestionIndex);
         mButtonOne.setText(question.OptionOne);
@@ -60,14 +65,14 @@ public class QuizItemFragment extends Fragment {
     @OnClick(R.id.buttonOption1)
     public void button1() {
 
-        QuizChoiceEvent event = new QuizChoiceEvent(0, 0);
+        QuizChoiceEvent event = new QuizChoiceEvent(mQuestionIndex, 0);
         post(event);
     }
 
     @OnClick(R.id.buttonOption2)
     public void button2() {
 
-        QuizChoiceEvent event = new QuizChoiceEvent(0, 1);
+        QuizChoiceEvent event = new QuizChoiceEvent(mQuestionIndex, 1);
         post(event);
     }
 

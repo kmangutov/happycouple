@@ -7,4 +7,11 @@ public class QuizQuestion
 {
     public String OptionOne;
     public String OptionTwo;
+
+    public int OptionOneMapping;
+    public int OptionTwoMapping;
+
+    public int Selection;
+
+    public QuizQuestion() {}
 }
